@@ -11,6 +11,8 @@
         Route::post('orders', [OrdersController::class, 'store']);
         Route::put('orders/{id}', [OrdersController::class, 'update']);
         Route::get('orders', [OrdersController::class, 'index']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+
     });
 
 ?>

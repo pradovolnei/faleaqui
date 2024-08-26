@@ -34,7 +34,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-
         try {
             // Validação das credenciais de login
             $request->validate([
@@ -69,6 +68,27 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ]);
+        } catch (\Exception $e) {
+            // Captura o erro e retorna a mensagem de erro e o código da linha
+            return response()->json([
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ], 500);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            
+            // Revoke the current token
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json([
+                'message' => 'Successfully logged out'
+            ]);
+
         } catch (\Exception $e) {
             // Captura o erro e retorna a mensagem de erro e o código da linha
             return response()->json([
