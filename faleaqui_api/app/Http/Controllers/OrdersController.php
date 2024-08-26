@@ -81,12 +81,21 @@ class OrdersController extends Controller
             // Obtém o usuário autenticado
             $user = Auth::user();
 
-            // Obtém as ordens do usuário com suas fotos
-            $orders = Orders::select('orders.*', 'users.name as user_name')
-            ->join('users', 'orders.user_id', '=', 'users.id')
-            ->where('orders.user_id', $user->id)
-            ->with('photos')
-            ->get();
+            // Verifica o tipo de usuário
+            if ($user->type_user == 1) {
+                // Se for type_user = 1, exibe apenas as ordens do usuário logado
+                $orders = Orders::select('orders.*', 'users.name as user_name')
+                    ->join('users', 'orders.user_id', '=', 'users.id')
+                    ->where('orders.user_id', $user->id)
+                    ->with('photos')
+                    ->get();
+            } else {
+                // Se for type_user = 2, exibe todas as ordens
+                $orders = Orders::select('orders.*', 'users.name as user_name')
+                    ->join('users', 'orders.user_id', '=', 'users.id')
+                    ->with('photos')
+                    ->get();
+            }
 
             // Itera sobre as ordens e faz a chamada à API Nominatim
             foreach ($orders as $order) {
@@ -121,7 +130,6 @@ class OrdersController extends Controller
                     $order->suburb = null;
                     $order->postcode = null;
                 }
-
             }
 
             // Adiciona a URL da imagem às fotos
@@ -145,5 +153,6 @@ class OrdersController extends Controller
             ], 500);
         }
     }
+
 
 }
